@@ -1,0 +1,582 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  Int                          @id @default(autoincrement())
+  firstName           String
+  lastName            String
+  email               String                       @unique
+  password            String
+  role                UserRole                     @default(ADMIN)
+  status              UserStatus                   @default(ACTIVE)
+  isVerified          Boolean                      @default(false)
+  company             String?
+  contactNo           String?
+  tier                String?
+  managerId           Int?
+  manager             User?                        @relation("managedBy", fields: [managerId], references: [id])
+  deliveryOrders      DeliveryOrder[]
+  leaveRecord         EmployeeLeaveRecord?
+  questionRecords     EmployeeQuizQuestionRecord[]
+  assignedSubjects    EmployeeSubjectRecord[]
+  leaveApplications   LeaveApplication[]           @relation("appliedBy")
+  vettedLeaves        LeaveApplication[]           @relation("vettedBy")
+  createdSubjects     Subject[]                    @relation("createdBy")
+  lastUpdatedSubjects Subject[]                    @relation("lastUpdatedBy")
+  subordinates        User[]                       @relation("managedBy")
+  jobRoles            JobRole[]
+}
+
+model Category {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique
+  productCategory ProductCategory[]
+}
+
+model Brand {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  product Product[]
+}
+
+model ProductCategory {
+  productId    Int
+  productSku   String
+  categoryName String
+  categoryId   Int
+  category     Category @relation(fields: [categoryId], references: [id])
+  product      Product  @relation(fields: [productId], references: [id])
+
+  @@id([productId, categoryId])
+}
+
+model Product {
+  id               Int               @id @default(autoincrement())
+  sku              String            @unique
+  name             String            @unique
+  image            String?
+  qtyThreshold     Int?
+  brandId          Int
+  brand            Brand             @relation(fields: [brandId], references: [id])
+  bundleProduct    BundleProduct[]
+  productCatalogue ProductCatalogue?
+  productCategory  ProductCategory[]
+  stockQuantity    StockQuantity[]
+  supplierProduct  SupplierProduct[]
+}
+
+model Location {
+  id            Int             @id @default(autoincrement())
+  name          String          @unique
+  address       String
+  stockQuantity StockQuantity[]
+}
+
+model StockQuantity {
+  productId    Int
+  productName  String
+  productSku   String
+  locationId   Int
+  quantity     Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  locationName String
+  location     Location @relation(fields: [locationId], references: [id])
+  product      Product  @relation(fields: [productId], references: [id])
+
+  @@id([productId, locationId])
+}
+
+model Bundle {
+  id              Int              @id @default(autoincrement())
+  name            String           @unique
+  description     String
+  bundleCatalogue BundleCatalogue?
+  bundleProduct   BundleProduct[]
+}
+
+model BundleProduct {
+  bundleId    Int
+  productId   Int
+  productSku  String
+  bundleName  String
+  productName String
+  quantity    Int
+  bundle      Bundle  @relation(fields: [bundleId], references: [id])
+  product     Product @relation(fields: [productId], references: [id])
+
+  @@id([productId, bundleId])
+}
+
+model ProcurementOrder {
+  id               Int                    @id @default(autoincrement())
+  orderDate        DateTime
+  description      String
+  paymentStatus    PaymentStatus          @default(PENDING)
+  fulfilmentStatus FulfilmentStatus       @default(CREATED)
+  supplierId       Int
+  totalAmount      Float
+  warehouseAddress String
+  supplierAddress  String
+  supplierEmail    String
+  supplierName     String
+  warehouseName    String
+  currency         String
+  procOrderItems   ProcurementOrderItem[]
+}
+
+model ProcurementOrderItem {
+  quantity    Int
+  procOrderId Int
+  id          Int              @id @default(autoincrement())
+  productName String
+  productSku  String
+  rate        Float
+  procOrder   ProcurementOrder @relation(fields: [procOrderId], references: [id])
+}
+
+model Supplier {
+  id              Int               @id @default(autoincrement())
+  email           String            @unique
+  name            String
+  address         String
+  currency        String
+  supplierProduct SupplierProduct[]
+}
+
+model Keys {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String @unique
+}
+
+model SalesOrderBundleItem {
+  id               Int            @id @default(autoincrement())
+  productName      String
+  quantity         Int
+  salesOrderItemId Int
+  salesOrderItem   SalesOrderItem @relation(fields: [salesOrderItemId], references: [id])
+}
+
+model SalesOrderItem {
+  id                    Int                    @id @default(autoincrement())
+  productName           String
+  price                 Float
+  quantity              Int
+  salesOrderId          Int
+  createdTime           DateTime
+  salesOrder            SalesOrder             @relation(fields: [salesOrderId], references: [id])
+  salesOrderBundleItems SalesOrderBundleItem[]
+}
+
+model SalesOrder {
+  id                Int              @id @default(autoincrement())
+  orderId           String           @unique
+  customerAddress   String
+  customerContactNo String
+  customerEmail     String?
+  currency          String
+  customerName      String
+  platformType      PlatformType
+  postalCode        String
+  amount            Float
+  createdTime       DateTime
+  customerRemarks   String?
+  orderStatus       OrderStatus      @default(PAID)
+  bulkOrderId       Int?
+  bulkOrder         BulkOrder?       @relation(fields: [bulkOrderId], references: [id])
+  deliveryOrder     DeliveryOrder[]
+  salesOrderItems   SalesOrderItem[]
+}
+
+model BulkOrder {
+  id                Int             @id @default(autoincrement())
+  amount            Float
+  paymentMode       PaymentMode
+  payeeName         String
+  payeeEmail        String
+  payeeRemarks      String?
+  bulkOrderStatus   BulkOrderStatus
+  createdTime       DateTime        @default(now())
+  orderId           String          @unique
+  payeeContactNo    String
+  payeeCompany      String?
+  discountCode      String?
+  transactionAmount Float
+  salesOrders       SalesOrder[]
+}
+
+model Newsletter {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  emailSubject        String
+  emailBodyTitle      String
+  emailBody           String
+  discountCode        String
+  scheduledNewsletter ScheduledNewsletter[]
+}
+
+model ProductCatalogue {
+  id          Int     @id @default(autoincrement())
+  price       Float
+  image       String?
+  productId   Int     @unique
+  description String?
+  product     Product @relation(fields: [productId], references: [id])
+}
+
+model BundleCatalogue {
+  id          Int     @id @default(autoincrement())
+  price       Float
+  image       String?
+  bundleId    Int     @unique
+  description String?
+  bundle      Bundle  @relation(fields: [bundleId], references: [id])
+}
+
+model Customer {
+  id                    Int      @id @default(autoincrement())
+  firstName             String
+  lastName              String
+  company               String?
+  totalSpent            Float
+  ordersCount           Int      @default(1)
+  email                 String   @unique
+  address               String
+  postalCode            String
+  contactNo             String
+  acceptsMarketing      Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  lastOrderDate         DateTime
+  daysSinceLastPurchase Int
+}
+
+model DeliveryOrder {
+  id                 Int              @id @default(autoincrement())
+  createdAt          DateTime         @default(now())
+  deliveryDate       DateTime?
+  shippitTrackingNum String?
+  carrier            String?
+  salesOrderId       Int
+  deliveryMode       DeliveryMode?    @default(STANDARD)
+  shippingDate       DateTime?
+  shippingType       ShippingType     @default(MANUAL)
+  assignedUserId     Int?
+  comments           String?
+  eta                DateTime?
+  assignedUser       User?            @relation(fields: [assignedUserId], references: [id])
+  salesOrder         SalesOrder       @relation(fields: [salesOrderId], references: [id])
+  deliveryStatus     DeliveryStatus[]
+}
+
+model DeliveryStatus {
+  status          String
+  statusOwner     String
+  date            String
+  timestamp       String
+  deliveryOrderId Int
+  deliveryOrder   DeliveryOrder @relation(fields: [deliveryOrderId], references: [id])
+
+  @@id([deliveryOrderId, date, timestamp, status])
+}
+
+model SupplierProduct {
+  supplierId Int
+  productId  Int
+  rate       Float
+  product    Product  @relation(fields: [productId], references: [id])
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+
+  @@id([supplierId, productId])
+}
+
+model ScheduledNewsletter {
+  id             Int        @id @default(autoincrement())
+  newsletterId   Int
+  customerEmails String[]
+  sentDate       DateTime
+  jobStatus      JobStatus  @default(SCHEDULED)
+  createdAt      DateTime   @default(now())
+  jobId          String     @unique
+  updatedAt      DateTime   @updatedAt
+  newsletter     Newsletter @relation(fields: [newsletterId], references: [id])
+}
+
+model LeaveApplication {
+  id               Int         @id @default(autoincrement())
+  applicationDate  DateTime
+  startDate        DateTime
+  endDate          DateTime
+  leaveType        LeaveType
+  status           LeaveStatus @default(PENDING)
+  description      String?
+  commentsByVetter String?
+  lastUpdated      DateTime
+  employeeId       Int
+  vettedById       Int?
+  employee         User        @relation("appliedBy", fields: [employeeId], references: [id])
+  vettedBy         User?       @relation("vettedBy", fields: [vettedById], references: [id])
+}
+
+model LeaveQuota {
+  tier          String @unique
+  annual        Int
+  childcare     Int
+  compassionate Int
+  parental      Int
+  sick          Int
+  unpaid        Int
+  id            Int    @id @default(autoincrement())
+}
+
+model EmployeeLeaveRecord {
+  employeeId           Int      @unique
+  annualQuota          Int
+  childcareQuota       Int
+  compassionateQuota   Int
+  parentalQuota        Int
+  sickQuota            Int
+  unpaidQuota          Int
+  annualBalance        Int
+  childcareBalance     Int
+  compassionateBalance Int
+  parentalBalance      Int
+  sickBalance          Int
+  unpaidBalance        Int
+  lastUpdated          DateTime
+  id                   Int      @id @default(autoincrement())
+  employee             User     @relation(fields: [employeeId], references: [id])
+}
+
+model Step {
+  id         Int    @id @default(autoincrement())
+  topicOrder Int
+  title      String
+  content    String
+  topicId    Int
+  topic      Topic  @relation(fields: [topicId], references: [id])
+}
+
+model Topic {
+  id           Int                     @id @default(autoincrement())
+  subjectOrder Int
+  status       ContentStatus           @default(DRAFT)
+  subjectId    Int
+  title        String
+  subject      Subject                 @relation(fields: [subjectId], references: [id])
+  steps        Step[]
+  records      EmployeeSubjectRecord[]
+}
+
+model EmployeeSubjectRecord {
+  subjectId        Int
+  userId           Int
+  completionRate   Float
+  id               Int      @id @default(autoincrement())
+  lastAttemptedAt  DateTime @default(now())
+  subject          Subject  @relation(fields: [subjectId], references: [id])
+  user             User     @relation(fields: [userId], references: [id])
+  completedQuizzes Quiz[]
+  completedTopics  Topic[]
+
+  @@unique([subjectId, userId])
+}
+
+model Subject {
+  id              Int                     @id @default(autoincrement())
+  description     String
+  isPublished     Boolean
+  completionRate  Float                   @default(0)
+  type            SubjectType
+  createdAt       DateTime
+  createdById     Int
+  lastUpdatedAt   DateTime
+  lastUpdatedById Int
+  title           String                  @unique
+  createdBy       User                    @relation("createdBy", fields: [createdById], references: [id])
+  lastUpdatedBy   User                    @relation("lastUpdatedBy", fields: [lastUpdatedById], references: [id])
+  usersAssigned   EmployeeSubjectRecord[]
+  quizzes         Quiz[]
+  topics          Topic[]
+}
+
+model Quiz {
+  id             Int                     @id @default(autoincrement())
+  subjectOrder   Int
+  title          String
+  description    String
+  passingScore   Float
+  completionRate Float                   @default(0)
+  status         ContentStatus           @default(DRAFT)
+  subjectId      Int
+  subject        Subject                 @relation(fields: [subjectId], references: [id])
+  questions      QuizQuestion[]
+  records        EmployeeSubjectRecord[]
+}
+
+model QuizQuestion {
+  id              Int                          @id @default(autoincrement())
+  quizOrder       Int
+  question        String
+  type            AnswerType
+  options         String[]
+  quizId          Int
+  correctAnswer   Int
+  quiz            Quiz                         @relation(fields: [quizId], references: [id])
+  questionRecords EmployeeQuizQuestionRecord[]
+}
+
+model EmployeeQuizQuestionRecord {
+  id          Int          @id @default(autoincrement())
+  questionId  Int
+  userId      Int
+  quizId      Int
+  userAnswer  Int
+  isCorrect   Boolean
+  attemptedAt DateTime
+  question    QuizQuestion @relation(fields: [questionId], references: [id])
+  user        User         @relation(fields: [userId], references: [id])
+
+  @@unique([questionId, userId])
+}
+
+model DiscountCode {
+  id             Int              @id @default(autoincrement())
+  discountCode   String           @unique
+  amount         Int
+  startDate      DateTime
+  endDate        DateTime?
+  customerEmails String[]
+  type           DiscountCodeType
+  minOrderAmount Float
+}
+
+model JobRole {
+  id             Int    @id @default(autoincrement())
+  jobRole        String @unique
+  description    String
+  usersInJobRole User[]
+}
+
+enum DiscountCodeType {
+  PERCENTAGE
+  FLAT_AMOUNT
+}
+
+enum BulkOrderStatus {
+  PAYMENT_PENDING
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+  FULFILLED
+  CANCELLED
+}
+
+enum PaymentMode {
+  CREDIT_CARD
+  PAYNOW
+}
+
+enum JobStatus {
+  SENT
+  CANCELLED
+  SCHEDULED
+}
+
+enum OrderStatus {
+  CREATED
+  PAID
+  PREPARING
+  PREPARED
+  READY_FOR_DELIVERY
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PlatformType {
+  SHOPEE
+  SHOPIFY
+  LAZADA
+  REDMART
+  OTHERS
+  B2B
+}
+
+enum UserRole {
+  ADMIN
+  INTERN
+  PARTTIME
+  FULLTIME
+  CUSTOMER
+  B2B
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+  PENDING
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+}
+
+enum FulfilmentStatus {
+  CREATED
+  ARRIVED
+  COMPLETED
+}
+
+enum DeliveryMode {
+  STANDARD
+  EXPRESS
+  PRIORITY
+}
+
+enum ShippingType {
+  MANUAL
+  SHIPPIT
+  LALAMOVE
+}
+
+enum LeaveType {
+  ANNUAL
+  CHILDCARE
+  COMPASSIONATE
+  PARENTAL
+  SICK
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum AnswerType {
+  MCQ
+  TRUEFALSE
+}
+
+enum ContentStatus {
+  DRAFT
+  PENDING
+  FINISHED
+}
+
+enum SubjectType {
+  COMPANY
+  POLICY
+  PROCESS
+}
