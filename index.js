@@ -9,10 +9,9 @@ const corsWhitelist = [
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:3002',
-  'https://algotech-fe.vercel.app',
-  'https://algotech-fe-prod.vercel.app',
-  'https://algotech-fe-b2b.vercel.app',
-  'https://algotech-fe-hrm.vercel.app'
+  'https://thekettlegourmet.vercel.app',
+  'https://thekettlegourmet-erp.vercel.app',
+  'https://thekettlegourmet-hrm.vercel.app'
 ];
 app.use(
   cors({

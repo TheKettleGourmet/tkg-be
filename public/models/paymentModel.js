@@ -5,7 +5,7 @@ const stripe = require('stripe')(
 const payByStripeCreditCard = async (req) => {
   const domain =
     process.env.NODE_ENV === 'production'
-      ? 'https://algotech-fe-b2b.vercel.app'
+      ? 'https://thekettlegourmet.vercel.app'
       : 'http://localhost:3002';
 
   const { amount, orderId, payeeEmail, discountCode } = req;
@@ -36,7 +36,7 @@ const payByStripeCreditCard = async (req) => {
 const payByStripePaynow = async (req) => {
   const domain =
     process.env.NODE_ENV === 'production'
-      ? 'https://algotech-fe-b2b.vercel.app'
+      ? 'https://thekettlegourmet.vercel.app'
       : 'http://localhost:3002';
 
   const { amount, orderId, payeeEmail, discountCode } = req;
@@ -68,7 +68,7 @@ const payByStripePaynow = async (req) => {
 const generatePaymentLink = async (req) => {
   const domain =
     process.env.NODE_ENV === 'production'
-      ? 'https://algotech-fe-b2b.vercel.app'
+      ? 'https://thekettlegourmet.vercel.app'
       : 'http://localhost:3002';
 
   const { paymentMode, amount, orderId, payeeEmail, discountCode } = req;

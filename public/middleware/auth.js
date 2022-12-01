@@ -57,8 +57,7 @@ const verifyAdmin = (req, res, next) => {
 const whiteListInternal = (req, res, next) => {
   const corsWhitelist = [
     'http://localhost:3000',
-    'https://algotech-fe.vercel.app',
-    'https://algotech-fe-prod.vercel.app',
+    'https://thekettlegourmet-erp.vercel.app',
     'jest'
   ];
   if (

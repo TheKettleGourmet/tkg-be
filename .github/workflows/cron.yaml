@@ -9,21 +9,21 @@ jobs:
       - name: Send Email Notification on Low Stocks
         run: |
           curl --request POST \
-          --url 'https://algotech-be.vercel.app/product/alerts/excel'
+          --url 'https://thekettlegourmet-be.vercel.app/product/alerts/excel'
   cron_2:
     runs-on: ubuntu-latest
     steps:
       - name: Refresh Shopee Token
         run: |
           curl --request GET \
-          --url 'https://algotech-be.vercel.app/shopee'
+          --url 'https://thekettlegourmet-be.vercel.app/shopee'
   cron_3:
     runs-on: ubuntu-latest
     needs: cron_2
     steps:
       - name: Get Shopee Orders
         run: |
-          curl --location --request POST 'https://algotech-be.vercel.app/shopee/orders' \
+          curl --location --request POST 'https://thekettlegourmet-be.vercel.app/shopee/orders' \
           --header 'Content-Type: application/json' \
           --data-raw "{
           \"time_from\": \"$(date +"%Y-%m-%dT00:00:00.000Z")\",
@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Get Shopify Orders
         run: |
-          curl --location --request POST 'https://algotech-be.vercel.app/shopify/orders' \
+          curl --location --request POST 'https://thekettlegourmet-be.vercel.app/shopify/orders' \
           --header 'Content-Type: application/json' \
           --data-raw "{
           \"last_date\": \"$(date +"%Y-%m-%dT00:00:00.000Z")\",
@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: Get Lazada Orders
         run: |
-          curl --location --request POST 'https://algotech-be.vercel.app/lazada/orders' \
+          curl --location --request POST 'https://thekettlegourmet-be.vercel.app/lazada/orders' \
           --header 'Content-Type: application/json' \
           --data-raw "{
           \"created_after\": \"$(date +"%Y-%m-%dT00:00:00.000Z")\",
