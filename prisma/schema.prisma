@@ -188,6 +188,7 @@ model SalesOrder {
   amount            Float
   createdTime       DateTime
   customerRemarks   String?
+  customerMessage   String?
   orderStatus       OrderStatus      @default(PAID)
   bulkOrderId       Int?
   bulkOrder         BulkOrder?       @relation(fields: [bulkOrderId], references: [id])

@@ -42,6 +42,7 @@ const createBulkOrder = async (req) => {
           currency: salesOrder.currency,
           orderStatus: 'CREATED',
           customerRemarks: salesOrder.customerRemarks,
+          customerMessage: salesOrder.customerMessage,
           amount: Number(salesOrder.amount),
           salesOrderItems: {
             create: salesOrder.salesOrderItems.map((so) => ({
@@ -173,6 +174,7 @@ const updateBulkOrder = async (req) => {
           createdTime: salesOrder.createdTime,
           currency: salesOrder.currency,
           customerRemarks: salesOrder.customerRemarks,
+          customerMessage: salesOrder.customerMessage,
           amount: Number(salesOrder.amount),
           salesOrderItems: {
             create: salesOrder.salesOrderItems.map((so) => ({
@@ -443,5 +445,5 @@ exports.findBulkOrderByEmail = findBulkOrderByEmail;
 exports.getAllBulkOrdersWithTimeFilter = getAllBulkOrdersWithTimeFilter;
 exports.updateBulkOrderStatus = updateBulkOrderStatus;
 exports.updateBulkOrderStatusByOrderId = updateBulkOrderStatusByOrderId;
-exports.getBulkOrdersByMonthForCustomer =getBulkOrdersByMonthForCustomer;
+exports.getBulkOrdersByMonthForCustomer = getBulkOrdersByMonthForCustomer;
 exports.updateBulkOrderPaymentMode = updateBulkOrderPaymentMode;
