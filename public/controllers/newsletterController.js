@@ -12,7 +12,7 @@ const { log } = require('../helpers/logger');
 const fs = require('fs');
 const emailHelper = require('../helpers/email');
 const newsletterTemplate = require('../utils/templates/newsletterTemplate');
-const { v4: uuid } = require('uuidv4');
+const { v4: uuid } = require('uuid');
 
 const createNewsletter = async (req, res) => {
   const { name, emailSubject, emailBodyTitle, emailBody, discountCode } =
