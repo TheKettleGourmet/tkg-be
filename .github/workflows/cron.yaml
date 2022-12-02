@@ -3,13 +3,6 @@ on:
   schedule:
     - cron: '0 22 * * *'
 jobs:
-  cron_1:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send Email Notification on Low Stocks
-        run: |
-          curl --request POST \
-          --url 'https://thekettlegourmet-be.vercel.app/product/alerts/excel'
   cron_2:
     runs-on: ubuntu-latest
     steps:
