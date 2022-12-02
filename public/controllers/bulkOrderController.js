@@ -8,7 +8,7 @@ const bundleModel = require('../models/bundleModel');
 const customerModel = require('../models/customerModel');
 const { generateBulkOrderExcel } = require('../helpers/excel');
 const { format } = require('date-fns');
-const { uuid } = require('uuidv4');
+const { v4: uuid } = require('uuidv4');
 const sns = require('../helpers/sns');
 const { generateBulkOrderPDF } = require('../helpers/pdf');
 

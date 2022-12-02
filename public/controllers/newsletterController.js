@@ -12,7 +12,7 @@ const { log } = require('../helpers/logger');
 const fs = require('fs');
 const emailHelper = require('../helpers/email');
 const newsletterTemplate = require('../utils/templates/newsletterTemplate');
-const { uuid } = require('uuidv4');
+const { v4: uuid } = require('uuidv4');
 
 const createNewsletter = async (req, res) => {
   const { name, emailSubject, emailBodyTitle, emailBody, discountCode } =
@@ -336,7 +336,9 @@ const updateScheduledNewsLetter = async (req, res) => {
       req: { body: req.body, params: req.params },
       res: { message: `Newsletter scheduled for ${sentDate}` }
     });
-    return res.json({ message: `Newsletter updated and scheduled for ${sentDate}` });
+    return res.json({
+      message: `Newsletter updated and scheduled for ${sentDate}`
+    });
   } catch (error) {
     log.error('ERR_NEWSLETTER_UPDATED-SCHEDULED-NEWSLETTER', {
       err: error.message,
