@@ -65,8 +65,8 @@ app.use(
   require('./public/routes/procurementRoutes')
 );
 app.use('/bundle', whiteListInternal, require('./public/routes/bundleRoutes'));
-app.use('/shopee', whiteListInternal, require('./public/routes/shopeeRoutes'));
-app.use('/lazada', whiteListInternal, require('./public/routes/lazadaRoutes'));
+app.use('/shopee', require('./public/routes/shopeeRoutes'));
+app.use('/lazada', require('./public/routes/lazadaRoutes'));
 app.use(
   '/delivery',
   whiteListInternal,
