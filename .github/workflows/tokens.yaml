@@ -9,12 +9,12 @@ jobs:
       - name: Refresh Lazada Token
         run: |
           curl --request GET \
-          --url 'https://algotech-be.vercel.app/lazada'
+          --url 'https://thekettlegourmet-be.vercel.app/lazada'
   cron_2:
     runs-on: ubuntu-latest
     steps:
       - name: Refresh Shopee Token
         run: |
           curl --request GET \
-          --url 'https://algotech-be.vercel.app/shopee'
+          --url 'https://thekettlegourmet-be.vercel.app/shopee'
   
