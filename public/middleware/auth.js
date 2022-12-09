@@ -55,6 +55,7 @@ const verifyAdmin = (req, res, next) => {
 };
 
 const whiteListInternal = (req, res, next) => {
+  console.log('here');
   const corsWhitelist = [
     'http://localhost:3000',
     'https://thekettlegourmet-erp.vercel.app',

@@ -72,11 +72,7 @@ app.use(
   whiteListInternal,
   require('./public/routes/deliveryRoutes')
 );
-app.use(
-  '/shopify',
-  whiteListInternal,
-  require('./public/routes/shopifyRoutes')
-);
+app.use('/shopify', require('./public/routes/shopifyRoutes'));
 app.use('/sales', whiteListInternal, require('./public/routes/salesRoutes'));
 app.use(
   '/newsletter',
