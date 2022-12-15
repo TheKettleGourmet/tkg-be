@@ -111,6 +111,19 @@ const findUserById = async (req) => {
   return user;
 };
 
+const findUserLeaveRecordById = async (req) => {
+  const { id } = req;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: Number(id)
+    },
+    include: {
+      leaveRecord: true
+    }
+  });
+  return user;
+};
+
 const findUserByEmail = async (req) => {
   const { email } = req;
   const user = await prisma.user.findUnique({
@@ -156,29 +169,53 @@ const editUser = async (req) => {
 
 const deleteUserById = async (req) => {
   const { id } = req;
-  let user = await prisma.user.update({
-    where: { id: Number(id) },
-    data: {
-      leaveApplications: {
-        deleteMany: {}
-      },
-      // leaveRecord: {
-      //   delete: true
-      // },
-      createdSubjects: {
-        deleteMany: {}
-      },
-      lastUpdatedSubjects: {
-        deleteMany: {}
-      },
-      assignedSubjects: {
-        deleteMany: {}
-      },
-      vettedLeaves: {
-        deleteMany: {}
+  let user = await findUserLeaveRecordById({ id });
+  if (user.leaveRecord) {
+    user = await prisma.user.update({
+      where: { id: Number(id) },
+      data: {
+        leaveApplications: {
+          deleteMany: {}
+        },
+        leaveRecord: {
+          delete: true
+        },
+        createdSubjects: {
+          deleteMany: {}
+        },
+        lastUpdatedSubjects: {
+          deleteMany: {}
+        },
+        assignedSubjects: {
+          deleteMany: {}
+        },
+        vettedLeaves: {
+          deleteMany: {}
+        }
       }
-    }
-  });
+    });
+  } else {
+    user = await prisma.user.update({
+      where: { id: Number(id) },
+      data: {
+        leaveApplications: {
+          deleteMany: {}
+        },
+        createdSubjects: {
+          deleteMany: {}
+        },
+        lastUpdatedSubjects: {
+          deleteMany: {}
+        },
+        assignedSubjects: {
+          deleteMany: {}
+        },
+        vettedLeaves: {
+          deleteMany: {}
+        }
+      }
+    });
+  }
   user = await prisma.user.delete({
     where: {
       id: Number(id)
