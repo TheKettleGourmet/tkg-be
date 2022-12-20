@@ -4,6 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { verifyToken, whiteListInternal } = require('./public/middleware/auth');
+var fileupload = require('express-fileupload');
 
 const corsWhitelist = [
   'http://localhost:3000',
@@ -13,6 +14,7 @@ const corsWhitelist = [
   'https://thekettlegourmet-erp.vercel.app',
   'https://thekettlegourmet-hrm.vercel.app'
 ];
+app.use(fileupload());
 app.use(
   cors({
     origin: function (origin, callback) {
